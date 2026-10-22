@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ffe6cc">
+<title>APNAधंधा — Ideas from the gully</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;600;700&family=JetBrains+Mono:wght@500&family=Kalam:wght@400;700&family=Noto+Sans+Devanagari:wght@700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async></script>
+<link rel="stylesheet" href="./styles.css"></head><body>
+<div id="fx"><svg class="px" data-d="8" style="inset:-3%;width:106%;height:106%" viewBox="0 0 1000 600" preserveAspectRatio="none"><g id="mid-lines" fill="none" stroke="#f6b49a" stroke-opacity=".58" stroke-width="12" stroke-dasharray="48 26" stroke-linecap="round"><path d="M-20 335 Q 250 300 480 330 T 1020 270"/><path d="M-20 390 Q 300 350 620 360 T 1020 420"/></g></svg><div id="fl"></div><div id="cf"></div></div>
+<svg id="bunting" preserveAspectRatio="none"></svg>
+
+<section class="view" id="home">
+  <div class="brand"><div class="logo">अ</div><div><div class="bt">APNA <b>धंधा</b></div><div class="bs">IDEAS FROM THE GULLY</div></div></div>
+  <button class="lock" id="lockBtn" aria-label="Owner login"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2b1206" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></button>
+  <div class="hero"><h1>Find your dhandha.</h1><p>Tap the wheel. Get a problem worth solving.</p></div>
+  <div class="stage" id="stage">
+    <div class="ptr"></div>
+    <div class="wheel" id="wheel"></div>
+    <div class="rb"><i></i><i></i></div>
+    <button class="spin" id="spin" aria-label="Spin the wheel"><span>SPIN</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#8a2b00" stroke-width="1.8" stroke-linecap="round"><g class="b1"><circle cx="6" cy="18" r="2.6"/><path d="M8 16.2L19 5"/></g><g class="b2"><circle cx="6" cy="6" r="2.6"/><path d="M8 7.8L19 19"/></g></svg></button>
+  </div>
+  <button class="pill" id="subBtn"><svg width="22" height="22" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg>Submit Idea</button>
+  <div class="foot"><a href="https://www.linkedin.com/in/mohit-gunani-iitbhu" target="_blank" rel="noopener noreferrer" aria-label="Made by Mohit Gunani, visit LinkedIn profile"><span>Made by Mohit Gunani</span><svg class="linkedin" viewBox="0 0 24 24" aria-hidden="true"><path fill="#0a66c2" d="M20.45 2H3.55C2.69 2 2 2.68 2 3.52v16.96c0 .84.69 1.52 1.55 1.52h16.9c.86 0 1.55-.68 1.55-1.52V3.52c0-.84-.69-1.52-1.55-1.52ZM8 18H5V9h3v9ZM6.5 7.8a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5ZM19 18h-3v-4.4c0-1.05-.02-2.4-1.46-2.4-1.46 0-1.69 1.14-1.69 2.32V18h-3V9h2.88v1.23h.04c.4-.71 1.38-1.46 2.84-1.46C18.65 8.77 19 10.68 19 13.16V18Z"/></svg><span aria-hidden="true">💗</span></a></div>
+</section>
+
+<section class="view" id="login"><div class="lcard">
+  <div class="brand"><div class="logo">अ</div><div style="text-align:left"><div class="bt" style="font-size:1.9rem">APNA <b>धंधा</b></div><div class="bs" style="font-size:.62rem">IDEAS FROM THE GULLY</div></div></div>
+  <div class="li"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#b3380d" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></div>
+  <h2>Owner's room</h2><p>Only the shop owner's Google account can open this room.</p>
+  <button class="pill" id="gBtn">Continue with Google</button><br>
+  <button class="back" id="backBtn">Back to the wheel</button>
+</div></section>
+
+<section class="view" id="admin">
+  <div class="ah"><div class="brand"><div class="logo" style="width:56px;height:56px;font-size:1.6rem">अ</div><div><div class="bt" style="font-size:1.9rem">APNA <b>धंधा</b></div><div class="bs" style="font-size:.62rem">IDEAS FROM THE GULLY</div></div></div>
+    <div class="ar"><span class="chip" id="aMail"></span><button class="btn2" id="sync">⟳ Sync now</button><button class="btn2" id="logout">↪ Log out</button></div></div>
+  <div class="info"><div class="ic"><span>📄</span><div><b>Google Sheet</b><span id="aSheet">–</span></div></div><div class="ic"><span>♪</span><div><b>Drive music</b><span id="aSongs">–</span></div></div></div>
+  <p class="note" id="aNote"></p>
+  <div class="tabs" id="tabs"></div>
+  <div id="aList"></div>
+</section>
+
+<div class="ov" id="cardOv"><div class="card" role="dialog" aria-label="Idea">
+  <button class="x" id="cx" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="#2b1206" stroke-width="2.4" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
+  <span class="cat" id="cCat"></span><h2 id="cProb"></h2>
+  <div class="fix" id="cFix"><b>Fix:</b> <span id="cSol"></span></div>
+  <div class="by" id="cBy"></div>
+  <div class="cr"><button class="vt" id="up">↑ <span id="uN">0</span></button><button class="vt" id="dn">↓ <span id="dN">0</span></button><button class="again" id="again">⟳ Spin again</button></div>
+</div></div>
+
+<div class="ov" id="subOv"><form class="card fm" id="subForm">
+  <button type="button" class="x" data-close="subOv" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="#2b1206" stroke-width="2.4" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
+  <span class="cat">New dhandha</span>
+  <h2>What’s broken on your street?</h2>
+  <label for="sName">Name <small>optional</small></label><input id="sName" maxlength="60" placeholder="Secret Contributor">
+  <div class="social-fields">
+    <div><label for="sInstagram">Instagram <small>optional</small></label><input id="sInstagram" maxlength="120" placeholder="@username or profile link"></div>
+    <div><label for="sLinkedin">LinkedIn <small>optional</small></label><input id="sLinkedin" maxlength="300" placeholder="https://linkedin.com/in/username"></div>
+    <div><label for="sTwitter">Twitter / X <small>optional</small></label><input id="sTwitter" maxlength="120" placeholder="@username or profile link"></div>
+  </div>
+  <label for="sProb">Problem <em>*</em></label><textarea id="sProb" maxlength="600" placeholder="What keeps people stuck?"></textarea>
+  <label for="sSol">Your fix <small>optional</small></label><textarea id="sSol" maxlength="600" placeholder="Got a jugaad? Drop it here."></textarea>
+  <label for="sCat">Category <small>optional</small></label><select id="sCat"></select>
+  <button type="button" class="send" id="sGo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M10 3l1.8 5.2L17 10l-5.2 1.8L10 17l-1.8-5.2L3 10l5.2-1.8zM18 14l.9 2.1L21 17l-2.1.9L18 20l-.9-2.1L15 17l2.1-.9z"/></svg>Send for approval</button>
+</form></div>
+
+<div class="ov" id="bulkOv"><div class="card fm">
+  <button type="button" class="x" data-close="bulkOv" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="#2b1206" stroke-width="2.4" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
+  <h2>Bulk import</h2><p>JSON array, CSV rows (problem,fix,name,category) or one problem per line. Imported ideas go live as Approved.</p>
+  <textarea id="bulk" style="min-height:200px"></textarea>
+  <div style="margin-top:18px"><button class="pill sm" id="bGo">Import</button></div>
+</div></div>
+
+<canvas id="cv"></canvas><div id="toast"></div>
+<div id="player"><span id="tname"></span>
+  <div class="eq"><div class="bars" id="bars"></div><div class="prog"><i id="pg"></i></div></div>
+  <button class="pb" id="prev" aria-label="Previous">‹</button>
+  <button class="pp" id="pp" aria-label="Play or pause"></button>
+  <button class="pb" id="next" aria-label="Next">›</button>
+</div>
+
+<script src="./app.js" defer></script></body></html>

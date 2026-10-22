@@ -1,0 +1,11 @@
+.git/
+.venv/
+**/__pycache__/
+**/*.py[cod]
+**/.env
+.env
+backend/secrets/
+**/secrets/
+service-account.json
+*.pem
+*.key
