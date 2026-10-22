@@ -210,12 +210,14 @@ function setT(){$("tname").textContent=tracks[ti]?.title||"";$("pg").style.width
 const ICON={p:'<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></svg>',a:'<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M7 4l13 8-13 8z"/></svg>'};
 function ui(){$("player").classList.toggle("playing",playing);$("pp").innerHTML=playing?ICON.p:ICON.a}
 function stopA(){clearInterval(tm);au.pause();clearWarm();playing=false;ui()}
-function play(){
+async function play(){
   const t=tracks[ti];if(!t)return;clearInterval(tm);au.pause();
   if(t.src){applyMusicLevel();const src=new URL(t.src,location.href).href;if(au.src!==src){au.src=t.src;au.load()}au.preload="auto";au.ontimeupdate=()=>$("pg").style.width=(au.currentTime/au.duration*100||0)+"%";au.onended=()=>go(1);au.onerror=()=>go(1);
-    const p=au.play();if(p)p.then(()=>{playing=true;ui()}).catch(()=>{playing=false;ui()});warmNext();return}
+    try{await au.play();playing=true;ui()}catch{playing=false;ui()}warmNext();return}
   ac=getAudioContext();if(!ac)return;
   if(!musicBus){musicBus=ac.createGain();musicBus.connect(ac.destination)}applyMusicLevel();
+  if(ac.state!=="running"){try{await ac.resume()}catch{}}
+  if(ac.state!=="running"){playing=false;ui();return}
   step=0;const d=60/t.bpm/2;playing=true;ui();
   tm=setInterval(()=>{const o=ac.createOscillator(),g=ac.createGain();o.type=t.wave;o.frequency.value=262*Math.pow(2,t.notes[step%12]/12);
     g.gain.setValueAtTime(.05,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0005,ac.currentTime+d*.9);o.connect(g).connect(musicBus);o.start();o.stop(ac.currentTime+d);
@@ -225,9 +227,14 @@ function go(n){if(!tracks.length)return;const next=(ti+n+tracks.length)%tracks.l
 $("pp").onclick=()=>playing?stopA():play();$("next").onclick=()=>go(1);$("prev").onclick=()=>go(-1);
 tracks=SYN;setT();ui();
 /* autoplay on open; if the browser blocks it, start on the first touch/click/key */
-(function(){let done=false;const start=()=>{if(done)return;done=true;["pointerdown","keydown","touchstart"].forEach(e=>removeEventListener(e,g));if(!playing)play()};const g=e=>{if(e.target.closest&&e.target.closest("#player"))return;start()};
-  ["pointerdown","keydown","touchstart"].forEach(e=>addEventListener(e,g,{once:false}));
-  play();setTimeout(()=>{if(playing)done=true},600)})();
+(function(){
+  let done=false,pending=false;const events=["pointerdown","keydown","touchstart"];
+  const finish=()=>{if(done)return;done=true;events.forEach(e=>removeEventListener(e,g))};
+  const start=async()=>{if(done||pending)return;if(playing){finish();return}pending=true;await play();pending=false;if(playing)finish()};
+  const g=e=>{if(e.target.closest&&e.target.closest("#player"))return;start()};
+  events.forEach(e=>addEventListener(e,g,{passive:true}));
+  play().then(()=>{if(playing)finish()});setTimeout(()=>{if(playing)finish()},600)
+})();
 (()=>{const p=$("player");let d=null;p.addEventListener("pointerdown",e=>{if(e.target.closest("button"))return;const r=p.getBoundingClientRect();d={x:e.clientX-r.left,y:e.clientY-r.top};p.setPointerCapture(e.pointerId);p.style.cursor="grabbing"});
   p.addEventListener("pointermove",e=>{if(!d)return;p.style.right="auto";p.style.bottom="auto";p.style.transform="none";p.style.left=Math.max(0,Math.min(innerWidth-p.offsetWidth,e.clientX-d.x))+"px";p.style.top=Math.max(0,Math.min(innerHeight-p.offsetHeight,e.clientY-d.y))+"px"});
   p.addEventListener("pointerup",()=>{d=null;p.style.cursor="grab"})})();
