@@ -67,7 +67,8 @@ h1{margin:0;font:800 5.1rem/1 'Bricolage Grotesque',sans-serif;letter-spacing:-.
 .x{position:absolute;top:22px;right:24px;width:52px;height:52px;border-radius:50%;border:1px solid #e4cdb7;background:#fff;display:grid;place-items:center}
 .cat{display:inline-block;background:#ffe3c7;color:#b3380d;font:700 .85rem Figtree;letter-spacing:.13em;text-transform:uppercase;padding:10px 18px;border-radius:30px}
 .card h2{font:800 clamp(1.5rem,3.2vw,2.5rem)/1.2 'Bricolage Grotesque',sans-serif;margin:22px 0;letter-spacing:-.01em}
-.problem-label{display:block;color:var(--or);font:700 .55em Figtree;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.problem-label{color:var(--or);font:700 .9rem Figtree;letter-spacing:.12em;text-transform:uppercase;margin-top:22px}
+.card .problem-label+h2{margin-top:6px}
 .fix{background:#fdeedd;border-radius:20px;padding:20px 24px;font-size:1.1rem;line-height:1.5}.fix b{color:var(--teal)}
 .by{margin:22px 0;color:#6b3b1d;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .social-links{display:inline-flex;align-items:center;gap:7px}
