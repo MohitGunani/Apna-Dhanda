@@ -2,6 +2,7 @@
 const CONFIG={BACKEND_URL:""}; /* leave empty when the backend serves this page; else e.g. "https://your-api.onrender.com" */
 let BACK=null,GCID=""; /* BACK=null means demo mode (no backend found) */
 const SEG=[{n:"Money",c:"#ff5a1f",a:45},{n:"Business",c:"#ffb800",a:135},{n:"Daily Life",c:"#e63946",a:225},{n:"Tech",c:"#2a9d8f",a:315}];
+const CATEGORIES=["Money","Business","Daily Life","Tech","AI","SaaS","Fintech","E-commerce","Education","Healthcare","Agriculture","Food & Beverage","Logistics","Climate & Sustainability","Creator Economy","Social Impact"];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function socialHref(kind,raw){
@@ -29,7 +30,14 @@ function socialIcon(kind,value){const href=socialHref(kind,value),label={instagr
     `<span class="social-link social-inactive" aria-hidden="true">${SOCIAL_SVG[kind]}</span>`;
 }
 const toast=m=>{const t=$("toast");t.textContent=m;t.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display="none",2800)};
-$("sCat").innerHTML='<option value="">No category</option>'+SEG.map(s=>`<option>${s.n}</option>`).join("");
+$("sCat").innerHTML='<option value="">No category</option>'+CATEGORIES.map(s=>`<option>${esc(s)}</option>`).join("")+'<option value="__other">Other</option>';
+$("sCat").addEventListener("change",()=>{
+  const isOther=$("sCat").value==="__other";
+  $("otherCategoryField").hidden=!isOther;
+  $("sOtherCat").required=isOther;
+  if(isOther)$("sOtherCat").focus();
+  else $("sOtherCat").value="";
+});
 const R=(a,b)=>a+Math.random()*(b-a);
 
 /* ===== background: bunting, floaters, confetti, parallax ===== */
@@ -183,11 +191,14 @@ document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.c
 $("subBtn").onclick=()=>{$("subOv").classList.add("on");$("sProb").focus()};
 $("sGo").onclick=async()=>{
   const problem=$("sProb").value.trim();if(!problem){toast("Problem likhna zaroori hai");return}
-  const o={name:$("sName").value.trim(),problem,solution:$("sSol").value.trim(),category:$("sCat").value,
+  const selectedCategory=$("sCat").value;
+  const category=selectedCategory==="__other"?$("sOtherCat").value.trim():selectedCategory;
+  if(selectedCategory==="__other"&&!category){toast("Apni category likhna zaroori hai");$("sOtherCat").focus();return}
+  const o={name:$("sName").value.trim(),problem,solution:$("sSol").value.trim(),category,
     instagram:$("sInstagram").value.trim(),linkedin:$("sLinkedin").value.trim(),twitter:$("sTwitter").value.trim()};
   $("sGo").disabled=true;
   try{if(BACK!==null){const j=await api("submit",o);if(j.error)throw 0}else{ideas.push({...o,id:Date.now(),status:"Pending",up:0,down:0});ds()}
-    $("subOv").classList.remove("on");$("subForm").reset();burst(150,.5,.5);toast("Idea mil gaya! Review ke baad wheel mein aayega.")}
+    $("subOv").classList.remove("on");$("subForm").reset();$("sCat").dispatchEvent(new Event("change"));burst(150,.5,.5);toast("Idea mil gaya! Review ke baad wheel mein aayega.")}
   catch{toast("Submit nahi hua, dobara try karo")}
   $("sGo").disabled=false;
 };
@@ -274,7 +285,7 @@ $("aList").onclick=e=>{const b=e.target.closest("[data-a]");if(!b)return;const i
   if(a==="edit"){const p=prompt("Problem",it.problem);if(p===null)return;const s=prompt("Fix",it.solution);if(s===null)return;mut("edit",{id,fields:{problem:p,solution:s}})}
   else if(a==="delete"){if(confirm("Delete permanently?"))mut("delete",{id})}else mut(a,{id})};
 function parse(t){t=t.trim();if(!t)return[];try{const j=JSON.parse(t);if(Array.isArray(j))return j.map(x=>typeof x==="string"?{problem:x}:x)}catch{}
-  return t.split(/\r?\n/).filter(Boolean).map(l=>{if(!l.includes(","))return{problem:l.trim()};const m=(l.match(/("([^"]*)"|[^,]*)(,|$)/g)||[]).map(s=>s.replace(/,$/,"").replace(/^"|"$/g,"").trim());return{problem:m[0],solution:m[1]||"",name:m[2]||"",category:SEG.find(s=>s.n.toLowerCase()===(m[3]||"").toLowerCase())?.n||""}}).filter(x=>x.problem)}
+  return t.split(/\r?\n/).filter(Boolean).map(l=>{if(!l.includes(","))return{problem:l.trim()};const m=(l.match(/("([^"]*)"|[^,]*)(,|$)/g)||[]).map(s=>s.replace(/,$/,"").replace(/^"|"$/g,"").trim());const category=m[3]||"";return{problem:m[0],solution:m[1]||"",name:m[2]||"",category:CATEGORIES.find(s=>s.toLowerCase()===category.toLowerCase())||category.slice(0,40)}}).filter(x=>x.problem)}
 $("bGo").onclick=async()=>{const items=parse($("bulk").value);if(!items.length)return toast("Kuch paste karo");if(!await mut("bulk",{items}))return;$("bulk").value="";$("bulkOv").classList.remove("on");toast(items.length+" ideas imported")};
 
 (async()=>{
