@@ -111,7 +111,6 @@ function duckMusic(){
 function applyMusicLevel(){
   const ducked=musicDuckCount>0;
   if(typeof au!=="undefined")au.volume=ducked ? .07 : 0.1;
-  if(musicBus&&ac)musicBus.gain.setTargetAtTime(ducked ? .06 : .4,ac.currentTime,.12);
 }
 function getAudioContext(){
   try{ac=ac||(window.AudioContext?new AudioContext():new webkitAudioContext());if(ac.state==="suspended")ac.resume().catch(()=>{});return ac}catch{return null}
@@ -193,14 +192,13 @@ $("sGo").onclick=async()=>{
   $("sGo").disabled=false;
 };
 
-/* ===== music (Drive songs via backend; synth fallback) ===== */
-let tracks=[],ti=0,playing=false,ac,tm,step=0,au=new Audio(),musicBus=null,musicDuckCount=0,warmAudio=null,warmIndex=-1;
+/* ===== music (Drive songs via backend) ===== */
+let tracks=[],ti=0,playing=false,ac,au=new Audio(),musicDuckCount=0,warmAudio=null,warmIndex=-1;
 au.volume=.28;au.preload="auto";
-const SYN=[{title:"Dukan Khul Gayi",notes:[0,4,7,12,7,4,9,12,9,5,7,11],bpm:132,wave:"triangle"},{title:"Shubh Aarambh",notes:[0,2,4,7,4,2,0,-3,0,4,7,9],bpm:118,wave:"square"},{title:"Gallaa Bharo",notes:[0,7,4,7,5,9,7,12,11,7,4,2],bpm:140,wave:"sawtooth"}];
 $("bars").innerHTML=Array.from({length:26},(_, i)=>`<i style="animation-duration:${R(.35,.9).toFixed(2)}s;animation-delay:${-R(0,.8).toFixed(2)}s;height:${30+Math.random()*70}%"></i>`).join("");
 function clearWarm(){if(warmAudio){warmAudio.pause();warmAudio.removeAttribute("src");warmAudio.load()}warmAudio=null;warmIndex=-1}
 function warmNext(){if(tracks.length<2||!tracks[(ti+1)%tracks.length]?.src)return;const ix=(ti+1)%tracks.length;if(warmAudio&&warmIndex===ix)return;clearWarm();warmIndex=ix;warmAudio=new Audio();warmAudio.preload="auto";warmAudio.src=tracks[ix].src;warmAudio.load()}
-function buildTracks(randomStart=false){const was=playing,previousId=tracks[ti]?.id,nextTracks=songs.length?songs.map(s=>({id:s.id,title:s.name.replace(/\.[^.]+$/,""),src:BACK+"/api/songs/"+s.id+"/stream"})):SYN;
+function buildTracks(randomStart=false){const was=playing,previousId=tracks[ti]?.id,nextTracks=songs.map(s=>({id:s.id,title:s.name.replace(/\.[^.]+$/,""),src:BACK+"/api/songs/"+s.id+"/stream"}));
   const currentIndex=previousId?nextTracks.findIndex(t=>t.id===previousId):-1;
   if(!randomStart&&currentIndex>=0){clearWarm();tracks=nextTracks;ti=currentIndex;setT();if(playing)warmNext();return}
   stopA();clearWarm();tracks=nextTracks;
@@ -209,23 +207,15 @@ function buildTracks(randomStart=false){const was=playing,previousId=tracks[ti]?
 function setT(){$("tname").textContent=tracks[ti]?.title||"";$("pg").style.width="0"}
 const ICON={p:'<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></svg>',a:'<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M7 4l13 8-13 8z"/></svg>'};
 function ui(){$("player").classList.toggle("playing",playing);$("pp").innerHTML=playing?ICON.p:ICON.a}
-function stopA(){clearInterval(tm);au.pause();clearWarm();playing=false;ui()}
+function stopA(){au.pause();clearWarm();playing=false;ui()}
 async function play(){
-  const t=tracks[ti];if(!t)return;clearInterval(tm);au.pause();
-  if(t.src){applyMusicLevel();const src=new URL(t.src,location.href).href;if(au.src!==src){au.src=t.src;au.load()}au.preload="auto";au.ontimeupdate=()=>$("pg").style.width=(au.currentTime/au.duration*100||0)+"%";au.onended=()=>go(1);au.onerror=()=>go(1);
-    try{await au.play();playing=true;ui()}catch{playing=false;ui()}warmNext();return}
-  ac=getAudioContext();if(!ac)return;
-  if(!musicBus){musicBus=ac.createGain();musicBus.connect(ac.destination)}applyMusicLevel();
-  if(ac.state!=="running"){try{await ac.resume()}catch{}}
-  if(ac.state!=="running"){playing=false;ui();return}
-  step=0;const d=60/t.bpm/2;playing=true;ui();
-  tm=setInterval(()=>{const o=ac.createOscillator(),g=ac.createGain();o.type=t.wave;o.frequency.value=262*Math.pow(2,t.notes[step%12]/12);
-    g.gain.setValueAtTime(.05,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0005,ac.currentTime+d*.9);o.connect(g).connect(musicBus);o.start();o.stop(ac.currentTime+d);
-    step++;$("pg").style.width=(step%96)/96*100+"%";if(step%96===0)go(1)},d*1000);
+  const t=tracks[ti];if(!t?.src)return;au.pause();
+  applyMusicLevel();const src=new URL(t.src,location.href).href;if(au.src!==src){au.src=t.src;au.load()}au.preload="auto";au.ontimeupdate=()=>$("pg").style.width=(au.currentTime/au.duration*100||0)+"%";au.onended=()=>go(1);au.onerror=()=>go(1);
+  try{await au.play();playing=true;ui()}catch{playing=false;ui()}warmNext();
 }
 function go(n){if(!tracks.length)return;const next=(ti+n+tracks.length)%tracks.length;if(n>0&&warmAudio&&warmIndex===next){au.pause();au=warmAudio;warmAudio=null;warmIndex=-1;au.volume=musicDuckCount ? .07 : .28}else if(warmIndex!==-1&&warmIndex!==next)clearWarm();ti=next;setT();play()}
 $("pp").onclick=()=>playing?stopA():play();$("next").onclick=()=>go(1);$("prev").onclick=()=>go(-1);
-tracks=SYN;setT();ui();
+setT();ui();
 /* autoplay on open; if the browser blocks it, start on the first touch/click/key */
 (function(){
   let done=false,pending=false;const events=["pointerdown","keydown","touchstart"];
