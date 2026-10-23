@@ -48,10 +48,13 @@ class VoteIn(BaseModel):
 class StatusIn(BaseModel):
     status: str
 class EditIn(BaseModel):
-    problem: Optional[str] = Field(None, max_length=600)
+    problem: Optional[str] = Field(None, min_length=3, max_length=600)
     solution: Optional[str] = Field(None, max_length=600)
     name: Optional[str] = Field(None, max_length=60)
     category: Optional[str] = Field(None, max_length=40)
+    instagram: Optional[str] = Field(None, max_length=120)
+    linkedin: Optional[str] = Field(None, max_length=300)
+    twitter: Optional[str] = Field(None, max_length=120)
 class LoginIn(BaseModel):
     access_token: str = Field(..., min_length=20, max_length=8192)
 class BulkIn(BaseModel):

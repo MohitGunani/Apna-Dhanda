@@ -73,6 +73,22 @@
   <div style="margin-top:18px"><button class="pill sm" id="bGo">Import</button></div>
 </div></div>
 
+<div class="ov" id="editOv"><form class="card fm" id="editForm" aria-label="Edit idea">
+  <button type="button" class="x" data-close="editOv" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="#2b1206" stroke-width="2.4" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
+  <span class="cat">Edit idea</span>
+  <h2>Update the idea details</h2>
+  <label for="eName">Name <small>optional</small></label><input id="eName" maxlength="60">
+  <label for="eProb">Problem <em>*</em></label><textarea id="eProb" maxlength="600" minlength="3" required></textarea>
+  <label for="eSol">Your fix <small>optional</small></label><textarea id="eSol" maxlength="600"></textarea>
+  <label for="eCat">Category <small>optional</small></label><input id="eCat" maxlength="40">
+  <div class="social-fields">
+    <div><label for="eInstagram">Instagram <small>optional</small></label><input id="eInstagram" maxlength="120" placeholder="@username or profile link"></div>
+    <div><label for="eLinkedin">LinkedIn <small>optional</small></label><input id="eLinkedin" maxlength="300" placeholder="https://linkedin.com/in/username"></div>
+    <div><label for="eTwitter">Twitter / X <small>optional</small></label><input id="eTwitter" maxlength="120" placeholder="@username or profile link"></div>
+  </div>
+  <button type="submit" class="send" id="eGo">Save changes</button>
+</form></div>
+
 <canvas id="cv"></canvas><div id="toast"></div>
 <div id="player"><span id="tname"></span>
   <div class="eq"><div class="bars" id="bars"></div><div class="prog"><i id="pg"></i></div></div>

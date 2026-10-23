@@ -282,8 +282,20 @@ async function mut(a,d){const j=await api(a,{token,...d});if(j.error){toast(j.er
     if(a==="bulk")d.items.forEach((x,k)=>L.push({category:"",name:"",solution:"",...x,id:Date.now()+k,status:"Approved",up:0,down:0}));ideas=L;ds()}
   return await loadAdmin()}
 $("aList").onclick=e=>{const b=e.target.closest("[data-a]");if(!b)return;const id=b.closest(".li2").dataset.id,it=all.find(i=>i.id==id),a=b.dataset.a;
-  if(a==="edit"){const p=prompt("Problem",it.problem);if(p===null)return;const s=prompt("Fix",it.solution);if(s===null)return;mut("edit",{id,fields:{problem:p,solution:s}})}
+  if(a==="edit"){
+    $("editForm").dataset.id=id;
+    $("eName").value=it.name||"";$("eProb").value=it.problem||"";$("eSol").value=it.solution||"";$("eCat").value=it.category||"";
+    $("eInstagram").value=it.instagram||"";$("eLinkedin").value=it.linkedin||"";$("eTwitter").value=it.twitter||"";
+    $("editOv").classList.add("on");$("eName").focus();
+  }
   else if(a==="delete"){if(confirm("Delete permanently?"))mut("delete",{id})}else mut(a,{id})};
+$("editForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const fields={name:$("eName").value.trim(),problem:$("eProb").value.trim(),solution:$("eSol").value.trim(),category:$("eCat").value.trim(),
+    instagram:$("eInstagram").value.trim(),linkedin:$("eLinkedin").value.trim(),twitter:$("eTwitter").value.trim()};
+  if(!await mut("edit",{id:e.currentTarget.dataset.id,fields}))return;
+  $("editOv").classList.remove("on");toast("Idea updated");
+});
 function parse(t){t=t.trim();if(!t)return[];try{const j=JSON.parse(t);if(Array.isArray(j))return j.map(x=>typeof x==="string"?{problem:x}:x)}catch{}
   return t.split(/\r?\n/).filter(Boolean).map(l=>{if(!l.includes(","))return{problem:l.trim()};const m=(l.match(/("([^"]*)"|[^,]*)(,|$)/g)||[]).map(s=>s.replace(/,$/,"").replace(/^"|"$/g,"").trim());const category=m[3]||"";return{problem:m[0],solution:m[1]||"",name:m[2]||"",category:CATEGORIES.find(s=>s.toLowerCase()===category.toLowerCase())||category.slice(0,40)}}).filter(x=>x.problem)}
 $("bGo").onclick=async()=>{const items=parse($("bulk").value);if(!items.length)return toast("Kuch paste karo");if(!await mut("bulk",{items}))return;$("bulk").value="";$("bulkOv").classList.remove("on");toast(items.length+" ideas imported")};
